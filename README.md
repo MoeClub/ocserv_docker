@@ -6,14 +6,6 @@ docker run --privileged --rm -it -p 443:443/tcp -p 443:443/udp ocserv/ocserv
 
 ```
 
-# Build
-```
-# apt install libarchive-tools
-wget -qO- https://github.com/MoeClub/ocserv_docker/archive/refs/heads/main.zip | bsdtar -xvf - --strip-components=1 -C /mnt
-bash /mnt/build.sh 1.4.1 2.92
-
-```
-
 # Crt.p12
 ```
 docker cp ocserv:/etc/ocserv/ca.crt.pem /mnt/ca.crt.pem
@@ -22,3 +14,13 @@ docker cp ocserv:/etc/ocserv/ca.key.pem /mnt/ca.key.pem
 sh /mnt/p12.sh NoRoute passwd
 
 ```
+
+# Build
+```
+# apt install libarchive-tools
+wget -qO- https://github.com/MoeClub/ocserv_docker/archive/refs/heads/main.zip | bsdtar -xvf - --strip-components=1 -C /mnt
+bash /mnt/build.sh 1.4.1 2.92
+
+```
+
+
