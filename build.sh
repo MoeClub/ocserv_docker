@@ -20,6 +20,7 @@ docker push "${userName}/ocserv:latest"
 docker tag ocserv:latest "${userName}/ocserv:${ocVer}"
 docker push "${userName}/ocserv:${ocVer}"
 
+# docker pull ocserv/ocserv:latest
 # docker run --privileged --rm -it -p 443:443 ocserv/ocserv
 # docker exec -it `docker ps -aq |head -n1` /bin/sh
 # docker ps -aq |xargs docker rm -f
