@@ -24,10 +24,7 @@ docker tag "${arch}:latest" "${userName}/${arch}:${ocVer}"
 docker push "${userName}/${arch}:${ocVer}"
 
 
-# docker manifest create ocserv/ocserv:latest --amend ocserv/amd64:latest --amend ocserv/arm64:latest
-# docker manifest push ocserv/ocserv:latest
-# docker manifest create ocserv/ocserv:1.4.1 --amend ocserv/amd64:1.4.1 --amend ocserv/arm64:1.4.1
-# docker manifest push ocserv/ocserv:1.4.1
+# ver="latest" && docker manifest create "ocserv/ocserv:${ver}" --amend "ocserv/amd64:${ver}" --amend "ocserv/arm64:${ver}" && docker manifest push -p "ocserv/ocserv:${ver}"
 
 # docker pull ocserv/ocserv:latest
 # docker run --privileged --rm -it -p 443:443 ocserv/ocserv
