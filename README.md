@@ -14,7 +14,7 @@ bash /mnt/build.sh 1.4.1 2.92
 
 ```
 
-# Crt
+# Crt.p12
 ```
 docker cp ocserv:/etc/ocserv/ca.crt.pem /mnt/ca.crt.pem
 docker cp ocserv:/etc/ocserv/ca.key.pem /mnt/ca.key.pem
