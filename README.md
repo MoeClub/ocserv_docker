@@ -8,6 +8,7 @@ docker run --privileged --rm -it -p 443:443/tcp -p 443:443/udp ocserv/ocserv
 
 # Build
 ```
+# apt install libarchive-tools
 wget -qO /tmp/main.zip https://github.com/MoeClub/ocserv_docker/archive/refs/heads/main.zip
 bsdtar -xf /tmp/main.zip --strip-components=1 -C /mnt
 bash /mnt/build.sh 1.4.1 2.92
