@@ -4,7 +4,7 @@ ocVer="${1:-1.4.1}"
 dnsVer="${2:-2.92}"
 
 apk add wget iproute2 openssl iptables
-wget -qO- https://raw.githubusercontent.com/MoeClub/Note/refs/heads/master/AnyConnect/build/update.sh |sh -s "${ocVer}" "${dnsVer}"
+sh update.sh -s "${ocVer}" "${dnsVer}"
 mkdir -p /etc/dnsmasq.d /etc/ocserv/group
 [ -f /mnt/Default ] && cp -rf /mnt/Default /etc/ocserv/group
 [ -f /mnt/NoRoute ] && cp -rf /mnt/NoRoute /etc/ocserv/group
