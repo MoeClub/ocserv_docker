@@ -17,7 +17,7 @@ sh /mnt/p12.sh NoRoute passwd
 
 # Build
 ```
-# apt install libarchive-tools
+# apt install -y libarchive-tools
 wget -qO- https://github.com/MoeClub/ocserv_docker/archive/refs/heads/main.zip | bsdtar -xvf - --strip-components=1 -C /mnt
 bash /mnt/buildx.sh 1.4.1 2.92
 
