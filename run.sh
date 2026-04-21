@@ -71,5 +71,6 @@ iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 }
 
 /usr/sbin/dnsmasq -d -q 2>&1 &
+/usr/sbin/ocserv -v
 /usr/sbin/ocserv --foreground --config /etc/ocserv/ocserv.conf
 
