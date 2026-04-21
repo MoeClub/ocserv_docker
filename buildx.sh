@@ -10,11 +10,11 @@ dockerName="ocserv_buildx"
 manifest=""
 for arch in "amd64" "arm64"; do
   docker run --privileged --rm tonistiigi/binfmt --install "${arch}"
-  docker rm -f "${dockerName}" >/dev/null 2>&1;
+  docker rm -f "${dockerName}" >/dev/null 2>&1 || true
   docker run --platform "linux/${arch}" --name "${dockerName}" -id -v /mnt:/mnt "${dockerBase}"
   docker exec "${dockerName}" /bin/sh /mnt/commit.sh "${ocVer}" "${dnsVer}"
   docker commit --change 'CMD ["/bin/sh", "/run.sh"]' "${dockerName}" "${arch}:${ocVer}"
-  docker rm -f "${dockerName}" >/dev/null 2>&1;
+  docker rm -f "${dockerName}" >/dev/null 2>&1 || true
   userName="$(docker info 2>/dev/null |grep 'Username:' |cut -d':' -f2 |sed 's/[[:space:]]//g')"
   [ -n "$userName" ] || continue
   [ "${withLatest}" = "1" ] && {
