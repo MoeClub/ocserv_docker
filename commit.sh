@@ -4,7 +4,7 @@ ocVer="${1:-1.4.1}"
 dnsVer="${2:-2.92}"
 
 apk add wget iproute2 openssl iptables
-sh /mnt/update.sh -s "${ocVer}" "${dnsVer}"
+sh /mnt/update.sh "${ocVer}" "${dnsVer}"
 mkdir -p /etc/dnsmasq.d /etc/ocserv/group
 [ -f /mnt/Default ] && cp -rf /mnt/Default /etc/ocserv/group
 [ -f /mnt/NoRoute ] && cp -rf /mnt/NoRoute /etc/ocserv/group
