@@ -56,7 +56,7 @@ iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 [ -n "${udp}" ] && [ "$udp" -gt "0" ] && iptables -I INPUT -p udp --dport "${udp}" -j ACCEPT
 
 [ -f "/etc/dnsmasq.conf" ] && {
-  sed -i "s/^except-interface=.*/except-interface=${device},lo/" "/etc/dnsmasq.conf"
+  sed -i "s/^except-interface=.*/except-interface=${device}/" "/etc/dnsmasq.conf"
   [ -n "${net}" ] && dnsnet="$(echo ${net} |cut -d. -f1-3)" || dnsnet=""
   [ -n "${dnsnet}" ] && {
     sed -i "s/^listen-address=.*/listen-address=${dnsnet}.1/" "/etc/dnsmasq.conf"
