@@ -59,11 +59,7 @@ iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
   sed -i "s/^except-interface=.*/except-interface=${device}/" "/etc/dnsmasq.conf"
   [ -n "${net}" ] && dnsnet="$(echo ${net} |cut -d. -f1-3)" || dnsnet=""
   [ -n "${dnsnet}" ] && {
-    sed -i "s/^dhcp-range=.*/dhcp-range=${dnsnet}.2,${dnsnet}.254,255.255.255.0,24h/" "/etc/dnsmasq.conf"
-    sed -i "s/^dhcp-option-force=option:router,.*/dhcp-option-force=option:router,${dnsnet}.1/" "/etc/dnsmasq.conf"
-    sed -i "s/^dhcp-option-force=option:dns-server,.*/dhcp-option-force=option:dns-server,${dnsnet}.1/" "/etc/dnsmasq.conf"
-    sed -i "s/^dhcp-option-force=option:netbios-ns,.*/dhcp-option-force=option:netbios-ns,${dnsnet}.1/" "/etc/dnsmasq.conf"
-    sed -i "s/^listen-address=.*/listen-address=127.0.0.1,${dnsnet}.1/" "/etc/dnsmasq.conf"
+    sed -i "s/^listen-address=.*/listen-address=${dnsnet}.1/" "/etc/dnsmasq.conf"
     sed -i "s/^srv-host=_vlmcs._tcp,.*/srv-host=_vlmcs._tcp,${dnsnet}.1,1688,0,100/" "/etc/dnsmasq.conf"
     sed -i "s/^srv-host=_vlmcs._tcp.lan,.*/srv-host=_vlmcs._tcp.lan,${dnsnet}.1,1688,0,100/" "/etc/dnsmasq.conf"
     sed -i "s/^srv-host=_vlmcs._tcp.srv,.*/srv-host=_vlmcs._tcp.srv,${dnsnet}.1,1688,0,100/" "/etc/dnsmasq.conf"
