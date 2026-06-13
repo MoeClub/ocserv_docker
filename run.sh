@@ -65,9 +65,12 @@ iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
     sed -i "s/^srv-host=_vlmcs._tcp.lan,.*/srv-host=_vlmcs._tcp.lan,${dnsnet}.1,1688,0,100/" "/etc/dnsmasq.conf"
     sed -i "s/^srv-host=_vlmcs._tcp.srv,.*/srv-host=_vlmcs._tcp.srv,${dnsnet}.1,1688,0,100/" "/etc/dnsmasq.conf"
   }
+  iptables -I INPUT -p tcp --dport 53 -j REJECT
+  iptables -I OUTPUT -p tcp --dport 53 -j REJECT
 }
 
-/usr/sbin/dnsmasq -d -q 2>&1 &
+/usr/sbin/dnsmasq -v
+/usr/sbin/dnsmasq 2>&1 &
 /usr/sbin/ocserv -v
 /usr/sbin/ocserv --foreground --config /etc/ocserv/ocserv.conf
 
