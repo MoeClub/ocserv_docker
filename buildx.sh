@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-oneVer="${1:-1.4.1}"
-twoVer="${2:-2.92}"
+oneVer="${1:-1.5.0}"
+twoVer="${2:-2.93}"
 withLatest="${3:-0}"
 dockerProject="ocserv"
 dockerBase="alpine:3.20"
