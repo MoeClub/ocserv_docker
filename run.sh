@@ -1,6 +1,10 @@
 #!/bin/sh
 
 [ -n "${TZ}" ] && [ -e "/usr/share/zoneinfo/${TZ}" ] && cp -rf "/usr/share/zoneinfo/${TZ}" /etc/localtime
+[ -n "${TCP}" ] || TCP="443"
+[ -n "${UDP}" ] || UDP="0"
+[ -n "${MTU}" ] || MTU="1340"
+
 [ ! -e "/dev/net/tun" ] && echo "try with --privileged " && exit 1
 device=`ls -1 /sys/class/net| grep -v '^lo$' |head -n 1`
 [ -n "$device" ] || exit 1
@@ -42,6 +46,12 @@ dnsDir=`find /mnt -type d -name "dnsmasq.d"`
 [ -f "/etc/ocserv/ca.key.pem" ] || openssl req -x509 -sha256 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes -days 3650 -subj "/C=/ST=/L=/OU=/O=/CN=${addr} CA" -addext "keyUsage=critical, keyCertSign, cRLSign" -rand /dev/urandom -outform PEM -keyout "/etc/ocserv/ca.key.pem" -out "/etc/ocserv/ca.crt.pem" >/dev/null 2>&1
 [ -f "/etc/ocserv/server.key.pem" ] && [ -f "/etc/ocserv/server.crt.pem" ] || openssl req -x509 -sha256 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes -days 3650 -subj "/C=/ST=/L=/OU=/O=/CN=${addr}" -config <(echo -e "[ req ]\ndistinguished_name=req\n") -addext "basicConstraints=CA:FALSE" -addext "keyUsage=critical, digitalSignature, keyEncipherment" -addext "extendedKeyUsage=serverAuth, clientAuth" -rand /dev/urandom -outform PEM -keyout "/etc/ocserv/server.key.pem" -out "/etc/ocserv/server.crt.pem" >/dev/null 2>&1
 
+[ -f "/etc/ocserv/ocserv.conf" ] && {
+  sed -i "s/^#\?tcp-port[[:space:]]*=.*/tcp-port = ${TCP}/" "/etc/ocserv/ocserv.conf"
+  sed -i "s/^#\?udp-port[[:space:]]*=.*/udp-port = ${UDP}/" "/etc/ocserv/ocserv.conf"
+  sed -i "s/^#\?mtu[[:space:]]*=.*/mtu = ${MTU}/" "/etc/ocserv/ocserv.conf"
+}
+
 tcp=`cat "/etc/ocserv/ocserv.conf" |grep '^#\?tcp-port' |cut -d"=" -f2 |grep -o '[0-9]*' |head -n1`
 udp=`cat "/etc/ocserv/ocserv.conf" |grep '^#\?udp-port' |cut -d"=" -f2 |grep -o '[0-9]*' |head -n1`
 net=`cat "/etc/ocserv/ocserv.conf" |grep '^ipv4-network' |cut -d"=" -f2 |grep -o '[0-9\.]*' |head -n1`
@@ -73,4 +83,3 @@ iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 /usr/sbin/dnsmasq 2>&1 &
 /usr/sbin/ocserv -v
 /usr/sbin/ocserv --foreground --config /etc/ocserv/ocserv.conf
-
