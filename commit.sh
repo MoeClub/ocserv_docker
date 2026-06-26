@@ -3,7 +3,7 @@
 ocVer="${1:-1.4.1}"
 dnsVer="${2:-2.92}"
 
-apk add wget tzdata iproute2 openssl iptables
+apk add --no-cache wget tzdata iproute2 openssl iptables
 cp -rf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 sh /mnt/update.sh "${ocVer}" "${dnsVer}"
 mkdir -p /etc/dnsmasq.d /etc/ocserv/group
