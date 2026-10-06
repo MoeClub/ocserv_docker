@@ -6,10 +6,11 @@
 [ -n "${MTU}" ] || MTU="1340"
 
 [ ! -e "/dev/net/tun" ] && echo "try with --privileged " && exit 1
-device=`ls -1 /sys/class/net| grep -v '^lo$' |head -n 1`
+device=`printenv DEVICE`
+[ -n "$device" ] || device=`ls -1 /sys/class/net| grep -v '^lo$' |head -n 1`
 [ -n "$device" ] || exit 1
-addr=`wget -qO- https://checkip.amazonaws.com/`
-[ -n "$addr" ] || addr=`ip -4 addr show "$net" | awk '/inet /{print $2}' | cut -d/ -f1`
+addr=`wget -qO- -T 3 https://checkip.amazonaws.com/`
+[ -n "$addr" ] || addr=`ip -4 addr show "$device" | awk '/inet /{print $2}' | cut -d/ -f1`
 [ -n "$addr" ] && echo "Addr: ${addr}"
 
 ocPath=`find /mnt -type f -name "ocserv.conf"`
@@ -22,7 +23,7 @@ dnsPath=`find /mnt -type f -name "dnsmasq.conf"`
 [ -n "$dnsPath" ] && echo "Path: ${dnsPath} --> /etc/dnsmasq.conf" && cp -rf "${dnsPath}" "/etc/dnsmasq.conf"
 
 dnsDir=`find /mnt -type d -name "dnsmasq.d"`
-[ -n "$dnsDir" ] || dnsDir=`find /etc/ocserv -type f -name "dnsmasq.d"`
+[ -n "$dnsDir" ] || dnsDir=`find /etc/ocserv -type d -name "dnsmasq.d"`
 [ -n "$dnsDir" ] && [ "$dnsDir" != "/etc/dnsmasq.d" ] && echo "Path: ${dnsDir} --> /etc/dnsmasq.d" && rm -rf "/etc/dnsmasq.d" && ln -sf "${dnsDir}" "/etc/dnsmasq.d"
 
 
@@ -58,13 +59,13 @@ net=`cat "/etc/ocserv/ocserv.conf" |grep '^ipv4-network' |cut -d"=" -f2 |grep -o
 
 echo 1 > /proc/sys/net/ipv4/ip_forward
 iptables -t nat -A POSTROUTING -o "${device}" -j MASQUERADE
-iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 [ -n "${net}" ] && iptables -I FORWARD -d "${net}/24" -j ACCEPT
 [ -n "${net}" ] && iptables -I FORWARD -s "${net}/24" -j ACCEPT
 [ -n "${net}" ] && iptables -I OUTPUT -d "${net}/24" -j ACCEPT
 [ -n "${net}" ] && iptables -I INPUT -s "${net}/24" -j ACCEPT
 [ -n "${tcp}" ] && [ "$tcp" -gt "0" ] && iptables -I INPUT -p tcp --dport "${tcp}" -j ACCEPT
 [ -n "${udp}" ] && [ "$udp" -gt "0" ] && iptables -I INPUT -p udp --dport "${udp}" -j ACCEPT
+iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
 [ -f "/etc/dnsmasq.conf" ] && {
   sed -i "s/^except-interface=.*/except-interface=${device},lo/" "/etc/dnsmasq.conf"
@@ -82,4 +83,4 @@ iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 /usr/sbin/dnsmasq -v
 /usr/sbin/dnsmasq 2>&1 &
 /usr/sbin/ocserv -v
-/usr/sbin/ocserv --foreground --config /etc/ocserv/ocserv.conf
+exec /usr/sbin/ocserv --foreground --config /etc/ocserv/ocserv.conf
